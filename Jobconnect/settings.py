@@ -2,6 +2,7 @@ import os
 
 from pathlib import Path
 from decouple import config 
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -62,10 +63,9 @@ WSGI_APPLICATION = 'Jobconnect.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}'
+    )
 }
 
 
@@ -76,7 +76,6 @@ AUTH_USER_MODEL = 'candidats.Utilisateur'
 LOGIN_URL = '/connexion/'
 LOGIN_REDIRECT_URL = '/tableau-de-bord/'
 
-# ── Fichiers statiques et médias ──
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -84,7 +83,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# En production, les médias sont servis comme des fichiers statiques
+if not DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 # ── Email (configurer pour la production) ──
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
