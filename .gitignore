@@ -1,0 +1,11 @@
+# Fichiers sensibles
+.env
+
+# Dossiers Django
+db.sqlite3
+media/
+
+# Dossiers système Windows
+__pycache__/
+*.pyc
+nant/

@@ -1,0 +1,79 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}Messages - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-4">
+    <h4 class="fw-800 mb-4"><i class="bi bi-inbox me-2"></i>Ma messagerie</h4>
+
+    {% if liste_messages %}
+    <div class="card card-border">
+        {% for msg in liste_messages %}
+        <div class="card-body px-4 py-3 {% if not msg.lu %}bg-accent-subtle{% endif %} {% if not forloop.last %}border-bottom{% endif %}">
+            <div class="d-flex gap-3">
+                <div class="flex-shrink-0">
+                    {% if msg.recruteur.profil.photo %}
+                    <img src="{{ msg.recruteur.profil.photo.url }}" class="avatar-sm" alt="">
+                    {% else %}
+                    <span class="avatar-sm placeholder-avatar">{{ msg.recruteur.first_name.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="fw-{% if msg.lu %}500{% else %}700{% endif %} small">{{ msg.recruteur.get_full_name }}</span>
+                            {% if not msg.lu %}
+                            <span class="badge bg-accent ms-2" style="font-size:0.65rem">Nouveau</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-muted" style="font-size:0.7rem">{{ msg.envoye_le|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <p class="fw-600 small mb-1">{{ msg.sujet }}</p>
+                    <p class="text-muted small mb-2" style="max-height: 40px; overflow: hidden;">{{ msg.message|truncatewords:25 }}</p>
+                    {% if not msg.lu %}
+                    <a href="{% url 'marquer_comme_lu' msg.id %}" class="btn btn-sm btn-outline-accent">
+                        <i class="bi bi-envelope-open me-1"></i>Marquer comme lu
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+                        
+                </div>
+
+                <!-- ── BOUTONS PAGINATION ── -->
+                <nav class="mt-4 d-flex justify-content-center">
+                    <ul class="pagination pagination-sm mb-0">
+                        {% if resultats.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ resultats.previous_page_number }}&{{ request.GET.urlencode }}">
+                                <i class="bi bi-chevron-left"></i> Précédent
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="page-item active disabled">
+                            <span class="page-link">Page {{ resultats.number }} / {{ resultats.paginator.num_pages }}</span>
+                        </li>
+
+                        {% if resultats.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ resultats.next_page_number }}&{{ request.GET.urlencode }}">
+                                Suivant <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+            </div> <!-- fin du row -->
+            {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-envelope fs-1 text-muted opacity-25 d-block mb-3"></i>
+        <p class="text-muted">Votre boîte de réception est vide.</p>
+        <p class="text-muted small">Les messages des recruteurs apparaîtront ici.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

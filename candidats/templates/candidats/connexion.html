@@ -1,0 +1,39 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}Connexion - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="text-center mb-4">
+                <h2 class="fw-800">Connexion</h2>
+                <p class="text-muted">Ravi de vous revoir sur JobConnect.</p>
+            </div>
+            <div class="card card-border p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-500">Email</label>
+                        {{ formulaire.username }}
+                        {% if formulaire.username.errors %}<div class="text-danger small mt-1">{{ formulaire.username.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-500">Mot de passe</label>
+                        {{ formulaire.password }}
+                        {% if formulaire.password.errors %}<div class="text-danger small mt-1">{{ formulaire.password.errors.0 }}</div>{% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-accent w-100 py-2 fw-600">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                    </button>
+                </form>
+            </div>
+            <p class="text-center text-muted mt-3 small">
+                Pas encore de compte ?
+                <a href="{% url 'inscription_candidat' %}" class="fw-600 text-accent">Candidat</a> /
+                <a href="{% url 'inscription_recruteur' %}" class="fw-600 text-accent">Recruteur</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

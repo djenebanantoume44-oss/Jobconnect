@@ -1,0 +1,152 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}Tableau de bord - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card card-border p-4 text-center">
+                {% if profil.photo %}
+                <img src="{{ profil.photo.url }}" alt="Photo" class="profile-photo-lg mb-3">
+                {% else %}
+                <div class="profile-photo-lg placeholder-photo mb-3">{{ user.first_name.0 }}{{ user.last_name.0 }}</div>
+                {% endif %}
+                <h5 class="fw-700 mb-1">{{ user.get_full_name }}</h5>
+                <p class="text-muted small mb-2">{{ profil.domaine_affiche }}</p>
+                <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                    {% if user.email_verifie %}
+                    <span class="badge badge-verified-sm"><i class="bi bi-patch-check-fill me-1"></i>Email vérifié</span>
+                    {% endif %}
+                    {% if user.badge_verifie %}
+                    <span class="badge badge-gold-sm"><i class="bi bi-award-fill me-1"></i>Profil vérifié</span>
+                    {% endif %}
+                </div>
+                {% if not user.telephone_verifie %}
+                <form method="post" action="{% url 'verifier_telephone' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-accent btn-sm w-100">
+                        <i class="bi bi-phone me-1"></i>Vérifier mon téléphone
+                    </button>
+                </form>
+                {% endif %}
+                <hr class="my-3">
+                <div class="d-grid gap-2 text-start">
+                    <a href="{% url 'voir_profil' user.id %}" class="btn btn-sm text-start">
+                        <i class="bi bi-eye me-2"></i>Voir mon profil public
+                    </a>
+                    <a href="{% url 'modifier_profil' %}" class="btn btn-sm text-start">
+                        <i class="bi bi-pencil me-2"></i>Modifier le profil
+                    </a>
+                    <a href="{% url 'ajouter_experience' %}" class="btn btn-sm text-start">
+                        <i class="bi bi-plus-circle me-2"></i>Ajouter une expérience
+                    </a>
+                    <a href="{% url 'boite_reception' %}" class="btn btn-sm text-start position-relative">
+                        <i class="bi bi-envelope me-2"></i>Messages
+                        {% if nombre_messages_non_lus > 0 %}
+                        <span class="position-absolute top-50 end-0 translate-middle badge rounded-pill bg-danger">{{ nombre_messages_non_lus }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            {% if not profil.domaine %}
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                <div>
+                    <strong>Profil incomplet.</strong> Complétez votre profil pour apparaître dans les recherches des recruteurs.
+                    <a href="{% url 'modifier_profil' %}" class="fw-600">Compléter maintenant</a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card card-border mb-4">
+                <div class="card-header bg-transparent border-0 pt-3 px-4">
+                    <h6 class="fw-700 mb-0">Mon profil</h6>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Domaine</span>
+                            <p class="fw-600 mb-0">{{ profil.domaine_affiche|default:"Non renseigné" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Niveau d'étude</span>
+                            <p class="fw-600 mb-0">{{ profil.niveau_etude_affiche|default:"Non renseigné" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Localisation</span>
+                            <p class="fw-600 mb-0">{{ profil.localisation|default:"Non renseignée" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Disponibilité</span>
+                            <p class="fw-600 mb-0">
+                                {% if profil.ouvert_au_travail %}
+                                <span class="text-success"><i class="bi bi-check-circle me-1"></i>Ouvert aux opportunités</span>
+                                {% else %}
+                                <span class="text-muted">Non disponible</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% if profil.competences.exists %}
+                        <div class="col-12">
+                            <span class="text-muted small">Compétences</span>
+                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                {% for competence in profil.competences.all %}
+                                <span class="badge skill-badge">{{ competence.nom }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if profil.description %}
+                        <div class="col-12">
+                            <span class="text-muted small">Description</span>
+                            <p class="mb-0">{{ profil.description }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-border">
+                <div class="card-header bg-transparent border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-700 mb-0">Expériences professionnelles</h6>
+                    <a href="{% url 'ajouter_experience' %}" class="btn btn-accent btn-sm">
+                        <i class="bi bi-plus me-1"></i>Ajouter
+                    </a>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    {% for exp in profil.experiences.all %}
+                    <div class="experience-item {% if not forloop.last %}mb-3 pb-3 border-bottom{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="fw-700 mb-1">{{ exp.poste }}</h6>
+                                <p class="text-muted small mb-1"><i class="bi bi-building me-1"></i>{{ exp.entreprise }}</p>
+                                <p class="text-muted small mb-0">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    {{ exp.date_debut|date:"M Y" }} —
+                                    {% if exp.poste_actuel %}Présent{% else %}{{ exp.date_fin|date:"M Y" }}{% endif %}
+                                </p>
+                            </div>
+                            <a href="{% url 'supprimer_experience' exp.id %}" class="btn btn-sm text-danger" title="Supprimer">
+                                <i class="bi bi-trash3"></i>
+                            </a>
+                        </div>
+                        {% if exp.description %}
+                        <p class="text-muted small mt-2 mb-0">{{ exp.description }}</p>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center small py-3">
+                        Aucune expérience ajoutée.
+                        <a href="{% url 'ajouter_experience' %}" class="text-accent fw-600">Ajouter votre première expérience</a>
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

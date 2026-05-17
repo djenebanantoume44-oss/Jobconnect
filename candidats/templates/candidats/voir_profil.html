@@ -1,0 +1,118 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}{{ utilisateur_profil.get_full_name }} - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-4">
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-border overflow-hidden">
+                <div class="profile-banner"></div>
+                <div class="card-body px-4 pb-4">
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-end gap-3" style="margin-top: -50px;">
+                        {% if profil.photo %}
+                        <img src="{{ profil.photo.url }}" alt="Photo" class="profile-photo-detail border border-4 border-white">
+                        {% else %}
+                        <div class="profile-photo-detail placeholder-photo border border-4 border-white">
+                            {{ utilisateur_profil.first_name.0 }}{{ utilisateur_profil.last_name.0 }}
+                        </div>
+                        {% endif %}
+                        <div class="flex-grow-1 mb-2">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <h4 class="fw-800 mb-0">{{ utilisateur_profil.get_full_name }}</h4>
+                                {% if utilisateur_profil.badge_verifie %}
+                                <span class="badge-verified"><i class="bi bi-patch-check-fill"></i> Vérifié</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-muted mb-0">{{ profil.domaine_affiche }} &middot; {{ profil.localisation|default:"Localisation non renseignée" }}</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            {% if peut_contacter %}
+                            <a href="{% url 'contacter_candidat' utilisateur_profil.id %}" class="btn btn-accent btn-sm">
+                                <i class="bi bi-envelope me-1"></i>Contacter
+                            </a>
+                            {% endif %}
+                            {% if peut_signaler %}
+                            <a href="{% url 'signaler' utilisateur_profil.id %}" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-flag me-1"></i>Signaler
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if profil.ouvert_au_travail %}
+                    <div class="mt-3">
+                        <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle me-1"></i>Ouvert aux opportunités</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3 mt-3">
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Niveau d'étude</span>
+                            <p class="fw-600 mb-0">{{ profil.niveau_etude_affiche }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Vérifications</span>
+                            <p class="mb-0">
+                                {% if utilisateur_profil.email_verifie %}
+                                <span class="text-success small me-2"><i class="bi bi-check-circle"></i> Email</span>
+                                {% endif %}
+                                {% if utilisateur_profil.telephone_verifie %}
+                                <span class="text-success small"><i class="bi bi-check-circle"></i> Téléphone</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if profil.competences.exists %}
+                    <div class="mt-3">
+                        <span class="text-muted small">Compétences</span>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            {% for competence in profil.competences.all %}
+                            <span class="badge skill-badge">{{ competence.nom }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if profil.description %}
+                    <div class="mt-3">
+                        <h6 class="fw-700">À propos</h6>
+                        <p class="text-muted mb-0" style="white-space: pre-line;">{{ profil.description }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if profil.experiences.exists %}
+            <div class="card card-border mt-4">
+                <div class="card-header bg-transparent border-0 pt-3 px-4">
+                    <h6 class="fw-700 mb-0">Expériences</h6>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    {% for exp in profil.experiences.all %}
+                    <div class="{% if not forloop.last %}mb-3 pb-3 border-bottom{% endif %}">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="fw-700 mb-1">{{ exp.poste }}</h6>
+                            {% if exp.poste_actuel %}
+                            <span class="badge bg-success-subtle text-success small">Actuel</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-building me-1"></i>{{ exp.entreprise }}
+                            &middot;
+                            <i class="bi bi-calendar3 me-1"></i>
+                            {{ exp.date_debut|date:"M Y" }} — {% if exp.poste_actuel %}Présent{% else %}{{ exp.date_fin|date:"M Y" }}{% endif %}
+                        </p>
+                        {% if exp.description %}
+                        <p class="text-muted small mb-0">{{ exp.description }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

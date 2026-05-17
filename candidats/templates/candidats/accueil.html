@@ -1,0 +1,175 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}JobConnect - Trouvez votre prochain emploi{% endblock %}
+
+{% block contenu %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-7">
+                <span class="badge badge-soft mb-3">Plateforme de recrutement</span>
+                <h1 class="display-3 fw-900 mb-4">
+                    Connectez <span class="text-accent">talents</span> et <span class="text-accent">opportunités</span>
+                </h1>
+                <p class="lead text-muted mb-4" style="max-width: 540px;">
+                    Créez votre profil professionnel en quelques minutes et laissez les recruteurs vous trouver.
+                    Ou recherchez le talent idéal parmi nos candidats vérifiés.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mb-5">
+                    <a href="{% url 'inscription_candidat' %}" class="btn btn-accent btn-lg px-4">
+                        <i class="bi bi-person-plus me-2"></i>Je cherche un emploi
+                    </a>
+                    <a href="{% url 'inscription_recruteur' %}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-building me-2"></i>Je recrute
+                    </a>
+                </div>
+                <div class="d-flex gap-4 flex-wrap">
+                    <div>
+                        <span class="fw-800 fs-3 text-white">{{ nombre_candidats }}+</span>
+                        <p class="text-muted small mb-0">Candidats inscrits</p>
+                    </div>
+                    <div>
+                        <span class="fw-800 fs-3 text-white">{{ nombre_recruteurs }}+</span>
+                        <p class="text-muted small mb-0">Recruteurs actifs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="hero-visual">
+                    <div class="hero-card hero-card-1">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="hero-avatar">DN</div>
+                            <div>
+                                <div class="fw-600 text-white small">Djénéba Nantoumé</div>
+                                <div class="text-muted" style="font-size:0.75rem">Développeuse web</div>
+                            </div>
+                            <span class="badge-verified ms-auto"><i class="bi bi-patch-check-fill"></i></span>
+                        </div>
+                    </div>
+                    <div class="hero-card hero-card-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="hero-avatar hero-avatar-2">JC</div>
+                            <div>
+                                <div class="fw-600 text-white small">JobConnect Corp</div>
+                                <div class="text-muted" style="font-size:0.75rem">5 offres actives</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-card hero-card-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-chat-dots-fill text-accent"></i>
+                            <span class="text-white small fw-500">Nouveau message</span>
+                        </div>
+                        <div class="text-muted" style="font-size:0.7rem">"Votre profil nous intéresse..."</div>
+                    </div>
+                    <div class="hero-circle hero-circle-1"></div>
+                    <div class="hero-circle hero-circle-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 mt-5">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <span class="badge badge-soft mb-2">Comment ça marche</span>
+            <h2 class="fw-800">Simple et efficace</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3"><i class="bi bi-person-badge"></i></div>
+                    <h5 class="fw-700">Créez votre profil</h5>
+                    <p class="text-muted small">Inscrivez-vous, ajoutez vos compétences, expériences et votre domaine d'activité.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3"><i class="bi bi-search-heart"></i></div>
+                    <h5 class="fw-700">Soyez trouvé</h5>
+                    <p class="text-muted small">Les recruteurs vous recherchent par domaine, compétence ou niveau d'étude.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3"><i class="bi bi-chat-left-text"></i></div>
+                    <h5 class="fw-700">Échangez</h5>
+                    <p class="text-muted small">Recevez des messages directement des recruteurs intéressés par votre profil.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-surface">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <span class="badge badge-soft mb-2">Domaines</span>
+            <h2 class="fw-800">Explorez par secteur</h2>
+        </div>
+        <div class="row g-3 justify-content-center">
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="domain-card p-3 text-center">
+                    <i class="bi bi-code-slash fs-2 text-accent mb-2 d-block"></i>
+                    <span class="fw-600 small">Informatique</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="domain-card p-3 text-center">
+                    <i class="bi bi-shop fs-2 text-accent mb-2 d-block"></i>
+                    <span class="fw-600 small">Commerce</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="domain-card p-3 text-center">
+                    <i class="bi bi-heart-pulse fs-2 text-accent mb-2 d-block"></i>
+                    <span class="fw-600 small">Santé</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="domain-card p-3 text-center">
+                    <i class="bi bi-gear fs-2 text-accent mb-2 d-block"></i>
+                    <span class="fw-600 small">Ingénierie</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="domain-card p-3 text-center">
+                    <i class="bi bi-mortarboard fs-2 text-accent mb-2 d-block"></i>
+                    <span class="fw-600 small">Éducation</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="domain-card p-3 text-center">
+                    <i class="bi bi-cash-stack fs-2 text-accent mb-2 d-block"></i>
+                    <span class="fw-600 small">Finance</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="domain-card p-3 text-center">
+                    <i class="bi bi-megaphone fs-2 text-accent mb-2 d-block"></i>
+                    <span class="fw-600 small">Marketing</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="domain-card p-3 text-center">
+                    <i class="bi bi-people fs-2 text-accent mb-2 d-block"></i>
+                    <span class="fw-600 small">Ressources Humaines</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="cta-section text-center p-5 rounded-4">
+            <h3 class="fw-800 mb-3">Prêt à trouver votre prochaine opportunité ?</h3>
+            <p class="text-muted mb-4">Rejoignez des milliers de professionnels sur JobConnect.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'inscription_candidat' %}" class="btn btn-accent btn-lg px-4">Créer mon profil</a>
+                <a href="{% url 'inscription_recruteur' %}" class="btn btn-outline-light btn-lg px-4">Recruter maintenant</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}Modifier le profil - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <h4 class="fw-800 mb-4"><i class="bi bi-pencil me-2"></i>Modifier mon profil</h4>
+            <div class="card card-border p-4">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-500">Domaine</label>
+                            {{ formulaire.domaine }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-500">Niveau d'étude</label>
+                            {{ formulaire.niveau_etude }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-500">Localisation</label>
+                            {{ formulaire.localisation }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-500">Compétences</label>
+                            {{ formulaire.competences_saisie }}
+                            <div class="form-text">{{ formulaire.competences_saisie.help_text }}</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-500">Description personnelle</label>
+                            {{ formulaire.description }}
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                {{ formulaire.ouvert_au_travail }}
+                                <label class="form-check-label fw-500" for="{{ formulaire.ouvert_au_travail.id_for_label }}">
+                                    Ouvert aux opportunités
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4 d-flex gap-3">
+                            <button type="submit" class="btn btn-accent px-4 fw-600">
+                                <i class="bi bi-check-lg me-2"></i>Enregistrer
+                            </button>
+                            <a href="{% url 'tableau_de_bord' %}" class="btn btn-outline-secondary px-4">Annuler</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

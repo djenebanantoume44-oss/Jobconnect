@@ -1,0 +1,56 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}Ajouter une expérience - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h4 class="fw-800 mb-4"><i class="bi bi-plus-circle me-2"></i>Ajouter une expérience</h4>
+            <div class="card card-border p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-500">Poste</label>
+                            {{ formulaire.poste }}
+                            {% if formulaire.poste.errors %}<div class="text-danger small mt-1">{{ formulaire.poste.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-500">Entreprise</label>
+                            {{ formulaire.entreprise }}
+                            {% if formulaire.entreprise.errors %}<div class="text-danger small mt-1">{{ formulaire.entreprise.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-500">Date de début</label>
+                            {{ formulaire.date_debut }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-500">Date de fin</label>
+                            {{ formulaire.date_fin }}
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                {{ formulaire.poste_actuel }}
+                                <label class="form-check-label small" for="{{ formulaire.poste_actuel.id_for_label }}">
+                                    J'occupe actuellement ce poste
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-500">Description</label>
+                            {{ formulaire.description }}
+                        </div>
+                        <div class="col-12 mt-4 d-flex gap-3">
+                            <button type="submit" class="btn btn-accent px-4 fw-600">
+                                <i class="bi bi-check-lg me-2"></i>Ajouter
+                            </button>
+                            <a href="{% url 'tableau_de_bord' %}" class="btn btn-outline-secondary px-4">Annuler</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}Tableau de bord Recruteur - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-4">
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card card-border p-4 text-center">
+                <i class="bi bi-send fs-2 text-accent mb-2 d-block"></i>
+                <span class="fw-800 fs-3 d-block">{{ total_messages }}</span>
+                <span class="text-muted small">Messages envoyés</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-border p-4 text-center">
+                <i class="bi bi-people fs-2 text-accent mb-2 d-block"></i>
+                <span class="fw-800 fs-3 d-block">{{ total_candidats }}</span>
+                <span class="text-muted small">Candidats inscrits</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-border p-4 text-center">
+                <i class="bi bi-search fs-2 text-accent mb-2 d-block"></i>
+                <a href="{% url 'rechercher' %}" class="btn btn-accent w-100">
+                    <i class="bi bi-search me-2"></i>Rechercher des candidats
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-border">
+        <div class="card-header bg-transparent border-0 pt-3 px-4">
+            <h6 class="fw-700 mb-0">Derniers messages envoyés</h6>
+        </div>
+        <div class="card-body px-4 pb-4">
+            {% for msg in user.messages_envoyes.all|slice:":5" %}
+            <div class="d-flex gap-3 {% if not forloop.last %}mb-3 pb-3 border-bottom{% endif %}">
+                <div class="flex-shrink-0">
+                    {% if msg.candidat.profil.photo %}
+                    <img src="{{ msg.candidat.profil.photo.url }}" class="avatar-sm" alt="">
+                    {% else %}
+                    <span class="avatar-sm placeholder-avatar">{{ msg.candidat.first_name.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-600 small">{{ msg.candidat.get_full_name }}</span>
+                        <span class="text-muted" style="font-size:0.7rem">{{ msg.envoye_le|date:"d/m/Y" }}</span>
+                    </div>
+                    <p class="text-muted small mb-0">{{ msg.sujet }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted text-center small py-3">
+                Vous n'avez pas encore envoyé de message.
+                <a href="{% url 'rechercher' %}" class="text-accent fw-600">Trouvez des candidats</a>
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

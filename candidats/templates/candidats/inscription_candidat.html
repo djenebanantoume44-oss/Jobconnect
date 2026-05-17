@@ -1,0 +1,61 @@
+{% extends 'candidats/base.html' %}
+{% block titre %}Inscription Candidat - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="text-center mb-4">
+                <h2 class="fw-800">Créer un compte candidat</h2>
+                <p class="text-muted">Rejoignez la communauté et faites-vous remarquer par les recruteurs.</p>
+            </div>
+            <div class="card card-border p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-500">Prénom</label>
+                            {{ formulaire.first_name }}
+                            {% if formulaire.first_name.errors %}<div class="text-danger small mt-1">{{ formulaire.first_name.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-500">Nom</label>
+                            {{ formulaire.last_name }}
+                            {% if formulaire.last_name.errors %}<div class="text-danger small mt-1">{{ formulaire.last_name.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-500">Email</label>
+                            {{ formulaire.email }}
+                            {% if formulaire.email.errors %}<div class="text-danger small mt-1">{{ formulaire.email.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-500">Téléphone</label>
+                            {{ formulaire.telephone }}
+                            {% if formulaire.telephone.errors %}<div class="text-danger small mt-1">{{ formulaire.telephone.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-500">Mot de passe</label>
+                            {{ formulaire.password1 }}
+                            {% if formulaire.password1.errors %}<div class="text-danger small mt-1">{{ formulaire.password1.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-500">Confirmer</label>
+                            {{ formulaire.password2 }}
+                            {% if formulaire.password2.errors %}<div class="text-danger small mt-1">{{ formulaire.password2.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-accent w-100 py-2 fw-600">
+                                <i class="bi bi-person-plus me-2"></i>Créer mon compte
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <p class="text-center text-muted mt-3 small">
+                Vous êtes recruteur ? <a href="{% url 'inscription_recruteur' %}" class="fw-600 text-accent">Inscrivez-vous ici</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'Candidats/base.html' %}
+{% block titre %}Rechercher des candidats - JobConnect{% endblock %}
+{% block classe_principale %}pt-5 mt-5{% endblock %}
+
+{% block contenu %}
+<div class="container py-4">
+    <h4 class="fw-800 mb-4"><i class="bi bi-search me-2"></i>Rechercher des candidats</h4>
+
+    <div class="card card-border p-3 mb-4">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-lg-5">
+                <label class="form-label small fw-500">Compétence ou mot-clé</label>
+                {{ formulaire.requete }}
+            </div>
+            <div class="col-md-3 col-6">
+                <label class="form-label small fw-500">Domaine</label>
+                {{ formulaire.domaine }}
+            </div>
+            <div class="col-md-3 col-6">
+                <label class="form-label small fw-500">Niveau d'étude</label>
+                {{ formulaire.niveau_etude }}
+            </div>
+            <div class="col-lg-1">
+                <button type="submit" class="btn btn-accent w-100"><i class="bi bi-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <p class="text-muted small mb-3">{{ resultats.paginator.count }} résultat(s)</p>
+
+    {% if resultats %}
+    <div class="row g-3">
+        {% for p in resultats %}
+        <div class="col-md-6 col-xl-4">
+            <div class="card card-border card-hover h-100">
+                <div class="card-body p-3">
+                    <div class="d-flex gap-3 mb-2">
+                        {% if p.photo %}
+                        <img src="{{ p.photo.url }}" class="avatar-md" alt="">
+                        {% else %}
+                        <span class="avatar-md placeholder-avatar">{{ p.utilisateur.first_name.0 }}{{ p.utilisateur.last_name.0 }}</span>
+                        {% endif %}
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-1">
+                                <a href="{% url 'voir_profil' p.utilisateur.id %}" class="fw-700 text-decoration-none">{{ p.utilisateur.get_full_name }}</a>
+                                {% if p.utilisateur.badge_verifie %}
+                                <i class="bi bi-patch-check-fill text-success small"></i>
+                                {% endif %}
+                            </div>
+                            <p class="text-muted small mb-0">{{ p.domaine_affiche }}</p>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-2">{{ p.niveau_etude_affiche }} &middot; {{ p.localisation|default:"—" }}</p>
+                    {% if p.competences.all %}
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                        {% for competence in p.competences.all|slice:":4" %}
+                        <span class="badge skill-badge-sm">{{ competence.nom }}</span>
+                        {% endfor %}
+                        {% if p.competences.all|length > 4 %}
+                        <span class="text-muted small">+{{ p.competences.all|length|add:"-4" }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <a href="{% url 'voir_profil' p.utilisateur.id %}" class="btn btn-outline-accent btn-sm w-100 mt-1">Voir le profil</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+                <!-- ── BOUTONS PAGINATION ── -->
+                <nav class="mt-4 d-flex justify-content-center">
+                    <ul class="pagination pagination-sm mb-0">
+                        {% if resultats.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ resultats.previous_page_number }}&{{ request.GET.urlencode }}">
+                                <i class="bi bi-chevron-left"></i> Précédent
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="page-item active disabled">
+                            <span class="page-link">Page {{ resultats.number }} / {{ resultats.paginator.num_pages }}</span>
+                        </li>
+
+                        {% if resultats.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ resultats.next_page_number }}&{{ request.GET.urlencode }}">
+                                Suivant <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+            </div> <!-- fin du row -->
+            {% else %}
+    
+    <div class="text-center py-5">
+        <i class="bi bi-search fs-1 text-muted opacity-25 d-block mb-3"></i>
+        <p class="text-muted">Aucun candidat ne correspond à vos critères.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
