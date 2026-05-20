@@ -41,7 +41,7 @@ def inscription_candidat(request):
         formulaire = FormulaireInscriptionCandidat(request.POST)
         if formulaire.is_valid():
             utilisateur = formulaire.save()
-           # _generer_et_envoyer_otp(utilisateur, 'email')
+            _generer_et_envoyer_otp(utilisateur, 'email')
             messages.success(request, "Compte créé ! Vérifiez votre email pour le code de confirmation.")
             return redirect('verifier_otp', utilisateur_id=utilisateur.id, objet='email')
     else:
@@ -108,7 +108,7 @@ def _generer_et_envoyer_otp(utilisateur, objet):
     if objet == 'email':
         sujet = "JobConnect - Code de vérification"
         message = f"Bonjour {utilisateur.first_name},\n\nVotre code de vérification est : {code}\n\nCe code expire dans 10 minutes."
-        send_mail(sujet, message, settings.EMAIL_HOST_USER, [utilisateur.email], fail_silently=True)
+        send_mail(sujet, message, settings.EMAIL_HOST_USER, [utilisateur.email], fail_silently=False)
 
 def renvoyer_otp(request, utilisateur_id, objet):
     """Renvoie un nouveau code OTP."""
