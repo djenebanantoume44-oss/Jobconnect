@@ -41,7 +41,7 @@ def inscription_candidat(request):
         formulaire = FormulaireInscriptionCandidat(request.POST)
         if formulaire.is_valid():
             utilisateur = formulaire.save()
-            _generer_et_envoyer_otp(utilisateur, 'email')
+           # _generer_et_envoyer_otp(utilisateur, 'email')
             messages.success(request, "Compte créé ! Vérifiez votre email pour le code de confirmation.")
             return redirect('verifier_otp', utilisateur_id=utilisateur.id, objet='email')
     else:
