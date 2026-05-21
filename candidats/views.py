@@ -108,7 +108,7 @@ def _generer_et_envoyer_otp(utilisateur, objet):
     if objet == 'email':
         sujet = "JobConnect - Code de vérification"
         message = f"Bonjour {utilisateur.first_name},\n\nVotre code de vérification est : {code}\n\nCe code expire dans 10 minutes."
-        send_mail(sujet, message, settings.EMAIL_HOST_USER, [utilisateur.email], fail_silently=True)
+        send_mail(sujet, message, settings.EMAIL_HOST_USER, [utilisateur.email], fail_silently=False)
 
 def renvoyer_otp(request, utilisateur_id, objet):
     """Renvoie un nouveau code OTP."""
