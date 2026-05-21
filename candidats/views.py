@@ -43,7 +43,7 @@ def inscription_candidat(request):
             utilisateur = formulaire.save()
             _generer_et_envoyer_otp(utilisateur, 'email')
             messages.success(request, "Compte créé ! Vérifiez votre email pour le code de confirmation.")
-            return redirect('verifier_otp', utilisateur_id=utilisateur.id, objet='email')
+            return redirect('verifier_otp', utilisateur_id=utilisateur.id, type='email')
     else:
         formulaire = FormulaireInscriptionCandidat()
     return render(request, 'candidats/inscription_candidat.html', {'formulaire': formulaire})
@@ -57,17 +57,17 @@ def inscription_recruteur(request):
             utilisateur = formulaire.save()
             _generer_et_envoyer_otp(utilisateur, 'email')
             messages.success(request, "Compte créé ! Vérifiez votre email pour le code de confirmation.")
-            return redirect('verifier_otp', utilisateur_id=utilisateur.id, objet='email')
+            return redirect('verifier_otp', utilisateur_id=utilisateur.id, type='email')
     else:
         formulaire = FormulaireInscriptionRecruteur()
     return render(request, 'candidats/inscription_recruteur.html', {'formulaire': formulaire})
 
-def verifier_otp(request, utilisateur_id, objet):
+def verifier_otp(request, utilisateur_id, type):
     """Vérifie le code OTP envoyé par email."""
     utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
 
     otp_obj = CodeOTP.objects.filter(
-        utilisateur=utilisateur, objet=objet, utilise=False
+        utilisateur=utilisateur, objet=type, utilise=False
     ).last()
     code_dev = otp_obj.code if (otp_obj and settings.DEBUG) else None
 
@@ -78,12 +78,12 @@ def verifier_otp(request, utilisateur_id, objet):
             if otp_obj and not otp_obj.est_expire() and code == otp_obj.code:
                 otp_obj.utilise = True
                 otp_obj.save()
-                if objet == 'email':
+                if type == 'email':
                     utilisateur.email_verifie = True
                     utilisateur.save()
                     login(request, utilisateur, backend='django.contrib.auth.backends.ModelBackend')
                     messages.success(request, "Email vérifié avec succès !")
-                elif objet == 'telephone':
+                elif type == 'telephone':
                     utilisateur.telephone_verifie = True
                     utilisateur.save()
                     messages.success(request, "Téléphone vérifié avec succès !")
@@ -96,26 +96,26 @@ def verifier_otp(request, utilisateur_id, objet):
     return render(request, 'candidats/verifier_otp.html', {
         'formulaire': formulaire,
         'utilisateur': utilisateur,
-        'objet': objet,
+        'type': type,
         'code_dev': code_dev,
     })
 
-def _generer_et_envoyer_otp(utilisateur, objet):
+def _generer_et_envoyer_otp(utilisateur, type):
     """Génère un code OTP à 6 chiffres et l'envoie par email."""
     code = f"{random.randint(0, 999999):06d}"
-    CodeOTP.objects.create(utilisateur=utilisateur, code=code, objet=objet)
+    CodeOTP.objects.create(utilisateur=utilisateur, code=code, objet=type)
 
-    if objet == 'email':
+    if type == 'email':
         sujet = "JobConnect - Code de vérification"
         message = f"Bonjour {utilisateur.first_name},\n\nVotre code de vérification est : {code}\n\nCe code expire dans 10 minutes."
         send_mail(sujet, message, settings.EMAIL_HOST_USER, [utilisateur.email], fail_silently=True)
 
-def renvoyer_otp(request, utilisateur_id, objet):
+def renvoyer_otp(request, utilisateur_id, type):
     """Renvoie un nouveau code OTP."""
     utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
-    _generer_et_envoyer_otp(utilisateur, objet)
+    _generer_et_envoyer_otp(utilisateur, type)
     messages.info(request, "Un nouveau code a été envoyé.")
-    return redirect('verifier_otp', utilisateur_id=utilisateur.id, objet=objet)
+    return redirect('verifier_otp', utilisateur_id=utilisateur.id, type=type)
 
 def connexion(request):
     if request.user.is_authenticated:
