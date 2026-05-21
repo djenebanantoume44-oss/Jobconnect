@@ -69,7 +69,7 @@ def verifier_otp(request, utilisateur_id, objet):
     otp_obj = CodeOTP.objects.filter(
         utilisateur=utilisateur, objet=objet, utilise=False
     ).last()
-    code_dev = otp_obj.code if otp_obj  else None
+    code_dev = otp_obj.code if (otp_obj and settings.DEBUG) else None
 
     if request.method == 'POST':
         formulaire = FormulaireOTP(request.POST)
@@ -108,7 +108,7 @@ def _generer_et_envoyer_otp(utilisateur, objet):
     if objet == 'email':
         sujet = "JobConnect - Code de vérification"
         message = f"Bonjour {utilisateur.first_name},\n\nVotre code de vérification est : {code}\n\nCe code expire dans 10 minutes."
-        send_mail(sujet, message, settings.EMAIL_HOST_USER, [utilisateur.email], fail_silently=False)
+        send_mail(sujet, message, settings.EMAIL_HOST_USER, [utilisateur.email], fail_silently=True)
 
 def renvoyer_otp(request, utilisateur_id, objet):
     """Renvoie un nouveau code OTP."""
