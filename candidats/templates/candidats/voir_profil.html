@@ -47,21 +47,7 @@
                     {% endif %}
 
                     <div class="row g-3 mt-3">
-                        <div class="col-sm-6">
-                            <span class="text-muted small">Niveau d'étude</span>
-                            <p class="fw-600 mb-0">{{ profil.niveau_etude_affiche }}</p>
-                        </div>
-                        <div class="col-sm-6">
-                            <span class="text-muted small">Vérifications</span>
-                            <p class="mb-0">
-                                {% if utilisateur_profil.email_verifie %}
-                                <span class="text-success small me-2"><i class="bi bi-check-circle"></i> Email</span>
-                                {% endif %}
-                                {% if utilisateur_profil.telephone_verifie %}
-                                <span class="text-success small"><i class="bi bi-check-circle"></i> Téléphone</span>
-                                {% endif %}
-                            </p>
-                        </div>
+                       
                     </div>
 
                     {% if profil.competences.exists %}

@@ -11,10 +11,7 @@ urlpatterns = [
     path('inscription/candidat/', views.inscription_candidat, name='inscription_candidat'),
     path('inscription/recruteur/', views.inscription_recruteur, name='inscription_recruteur'),
 
-    # Vérification OTP
-    path('verification/<int:utilisateur_id>/<str:type>/', views.verifier_otp, name='verifier_otp'),
-    path('renvoyer-otp/<int:utilisateur_id>/<str:type>/', views.renvoyer_otp, name='renvoyer_otp'),
-    path('verifier-telephone/', views.verifier_telephone, name='verifier_telephone'),
+   
 
     # Tableau de bord
     path('tableau-de-bord/', views.tableau_de_bord, name='tableau_de_bord'),

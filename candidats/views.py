@@ -13,12 +13,12 @@ from django.conf import settings
 
 from .models import (
     Utilisateur, ProfilProfessionnel, Competence,
-    ExperienceProfessionnelle, CodeOTP, MessageContact, Signalement
+    ExperienceProfessionnelle,  MessageContact, Signalement
 )
 from .forms import (
     FormulaireInscriptionCandidat, FormulaireInscriptionRecruteur,
     FormulaireProfil, FormulaireExperience, FormulaireRecherche,
-    FormulaireContact, FormulaireSignalement, FormulaireOTP
+    FormulaireContact, FormulaireSignalement, 
 )
 
 def accueil(request):
@@ -41,9 +41,11 @@ def inscription_candidat(request):
         formulaire = FormulaireInscriptionCandidat(request.POST)
         if formulaire.is_valid():
             utilisateur = formulaire.save()
-            _generer_et_envoyer_otp(utilisateur, 'email')
-            messages.success(request, "Compte créé ! Vérifiez votre email pour le code de confirmation.")
-            return redirect('verifier_otp', utilisateur_id=utilisateur.id, type='email')
+            utilisateur.email_verifie = True
+            utilisateur.save()
+            login(request, utilisateur, backend='django.contrib.auth.backends.ModelBackend')
+            messages.success(request, "Compte créé avec succès ! Bienvenue.")
+            return redirect('tableau_de_bord')
     else:
         formulaire = FormulaireInscriptionCandidat()
     return render(request, 'candidats/inscription_candidat.html', {'formulaire': formulaire})
@@ -55,67 +57,15 @@ def inscription_recruteur(request):
         formulaire = FormulaireInscriptionRecruteur(request.POST)
         if formulaire.is_valid():
             utilisateur = formulaire.save()
-            _generer_et_envoyer_otp(utilisateur, 'email')
-            messages.success(request, "Compte créé ! Vérifiez votre email pour le code de confirmation.")
-            return redirect('verifier_otp', utilisateur_id=utilisateur.id, type='email')
+            # On valide directement l'email
+            utilisateur.email_verifie = True
+            utilisateur.save()
+            login(request, utilisateur, backend='django.contrib.auth.backends.ModelBackend')
+            messages.success(request, "Compte créé avec succès ! Bienvenue.")
+            return redirect('tableau_de_bord')
     else:
         formulaire = FormulaireInscriptionRecruteur()
     return render(request, 'candidats/inscription_recruteur.html', {'formulaire': formulaire})
-
-def verifier_otp(request, utilisateur_id, type):
-    """Vérifie le code OTP envoyé par email."""
-    utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
-
-    otp_obj = CodeOTP.objects.filter(
-        utilisateur=utilisateur, objet=type, utilise=False
-    ).last()
-    code_dev = otp_obj.code if (otp_obj and settings.DEBUG) else None
-
-    if request.method == 'POST':
-        formulaire = FormulaireOTP(request.POST)
-        if formulaire.is_valid():
-            code = formulaire.cleaned_data['code']
-            if otp_obj and not otp_obj.est_expire() and code == otp_obj.code:
-                otp_obj.utilise = True
-                otp_obj.save()
-                if type == 'email':
-                    utilisateur.email_verifie = True
-                    utilisateur.save()
-                    login(request, utilisateur, backend='django.contrib.auth.backends.ModelBackend')
-                    messages.success(request, "Email vérifié avec succès !")
-                elif type == 'telephone':
-                    utilisateur.telephone_verifie = True
-                    utilisateur.save()
-                    messages.success(request, "Téléphone vérifié avec succès !")
-                return redirect('tableau_de_bord')
-            else:
-                messages.error(request, "Code invalide ou expiré. Réessayez.")
-    else:
-        formulaire = FormulaireOTP()
-
-    return render(request, 'candidats/verifier_otp.html', {
-        'formulaire': formulaire,
-        'utilisateur': utilisateur,
-        'type': type,
-        'code_dev': code_dev,
-    })
-
-def _generer_et_envoyer_otp(utilisateur, type):
-    """Génère un code OTP à 6 chiffres et l'envoie par email."""
-    code = f"{random.randint(0, 999999):06d}"
-    CodeOTP.objects.create(utilisateur=utilisateur, code=code, objet=type)
-
-    if type == 'email':
-        sujet = "JobConnect - Code de vérification"
-        message = f"Bonjour {utilisateur.first_name},\n\nVotre code de vérification est : {code}\n\nCe code expire dans 10 minutes."
-        send_mail(sujet, message, settings.EMAIL_HOST_USER, [utilisateur.email], fail_silently=True)
-
-def renvoyer_otp(request, utilisateur_id, type):
-    """Renvoie un nouveau code OTP."""
-    utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id)
-    _generer_et_envoyer_otp(utilisateur, type)
-    messages.info(request, "Un nouveau code a été envoyé.")
-    return redirect('verifier_otp', utilisateur_id=utilisateur.id, type=type)
 
 def connexion(request):
     if request.user.is_authenticated:
@@ -394,14 +344,6 @@ def signaler_profil(request, utilisateur_id):
 
     })
 
-@login_required
-def verifier_telephone(request):
-    """Demande et vérification OTP par téléphone (envoyé par email en dev)."""
-    if request.method == 'POST':
-        _generer_et_envoyer_otp(request.user, 'telephone')
-        messages.info(request, "Code de vérification envoyé (par email en mode développement).")
-        return redirect('verifier_otp', utilisateur_id=request.user.id, objet='telephone')
-    return redirect('tableau_de_bord')
 
 
 
