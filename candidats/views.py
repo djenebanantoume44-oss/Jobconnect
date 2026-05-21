@@ -69,7 +69,7 @@ def verifier_otp(request, utilisateur_id, objet):
     otp_obj = CodeOTP.objects.filter(
         utilisateur=utilisateur, objet=objet, utilise=False
     ).last()
-    code_dev = otp_obj.code if (otp_obj and settings.DEBUG) else None
+    code_dev = otp_obj.code if otp_obj  else None
 
     if request.method == 'POST':
         formulaire = FormulaireOTP(request.POST)
