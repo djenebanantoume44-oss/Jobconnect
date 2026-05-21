@@ -261,6 +261,7 @@ def contacter_candidat(request, candidat_id):
             msg = formulaire.save(commit=False)
             msg.recruteur = request.user
             msg.candidat = candidat
+            msg.envoye_par_candidat = False
             msg.save()
             send_mail(
                 f"JobConnect - Nouveau message : {msg.sujet}",
@@ -284,6 +285,10 @@ def boite_reception(request):
     if not request.user.est_candidat:
         messages.error(request, "Accès réservé aux chercheurs d'emploi.")
         return redirect('tableau_de_bord')
+
+    messages_recus = request.user.messages_recus.filter(envoye_par_candidat=False)
+    messages_envoyes = request.user.messages_recus.filter(envoye_par_candidat=True)
+
 
     liste_messages = request.user.messages_recus.select_related('recruteur').all()
     
@@ -342,6 +347,33 @@ def signaler_profil(request, utilisateur_id):
         'formulaire': formulaire,
         'utilisateur_signale': utilisateur_signale,
 
+    })
+
+
+@login_required
+def contacter_recruteur(request, recruteur_id):
+    """Le candidat répond à un recruteur."""
+    if not request.user.est_candidat:
+        messages.error(request, "Accès réservé aux candidats.")
+        return redirect('tableau_de_bord')
+    
+    recruteur = get_object_or_404(Utilisateur, id=recruteur_id, est_recruteur=True, est_suspendu=False)
+    
+    if request.method == 'POST':
+        formulaire = FormulaireContact(request.POST)
+        if formulaire.is_valid():
+            msg = formulaire.save(commit=False)
+            msg.recruteur = recruteur  # Le recruteur qui recevra le message
+            msg.candidat = request.user # Le candidat qui envoie
+            msg.envoye_par_candidat = True # ← On indique que c'est le candidat qui écrit
+            msg.save()
+            messages.success(request, "Réponse envoyée avec succès.")
+            return redirect('boite_reception')
+    else:
+        formulaire = FormulaireContact()
+    return render(request, 'candidats/contacter_recruteur.html', {
+        'formulaire': formulaire,
+        'recruteur': recruteur,
     })
 
 

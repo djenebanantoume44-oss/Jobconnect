@@ -27,6 +27,7 @@ urlpatterns = [
 
     # Messagerie
     path('contacter/<int:candidat_id>/', views.contacter_candidat, name='contacter_candidat'),
+    path('repondre/<int:recruteur_id>/', views.contacter_recruteur, name='contacter_recruteur'),
     path('messagerie/', views.boite_reception, name='boite_reception'),
     path('messagerie/<int:message_id>/lu/', views.marquer_comme_lu, name='marquer_comme_lu'),
 

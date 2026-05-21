@@ -143,6 +143,8 @@ class MessageContact(models.Model):
     envoye_le = models.DateTimeField(auto_now_add=True, verbose_name="Envoyé le")
     lu = models.BooleanField(default=False, verbose_name="Lu")
 
+    envoye_par_candidat = models.BooleanField(default=False, verbose_name="Envoyé par le candidat")
+
     class Meta:
         verbose_name = "Message"
         verbose_name_plural = "Messages"

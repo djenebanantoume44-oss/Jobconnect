@@ -8,33 +8,53 @@
 
     {% if liste_messages %}
     <div class="card card-border">
-        {% for msg in liste_messages %}
-        <div class="card-body px-4 py-3 {% if not msg.lu %}bg-accent-subtle{% endif %} {% if not forloop.last %}border-bottom{% endif %}">
+         {% for msg in liste_messages %}
+        <div class="card-body px-4 py-3 {% if not msg.lu and not msg.envoye_par_candidat %}bg-accent-subtle{% endif %} {% if not forloop.last %}border-bottom{% endif %}">
             <div class="d-flex gap-3">
                 <div class="flex-shrink-0">
-                    {% if msg.recruteur.profil.photo %}
-                    <img src="{{ msg.recruteur.profil.photo.url }}" class="avatar-sm" alt="">
+                    {% if msg.envoye_par_candidat %}
+                        <!-- C'est le candidat qui a envoyé -->
+                        <span class="avatar-sm placeholder-avatar bg-secondary-subtle text-secondary">Moi</span>
                     {% else %}
-                    <span class="avatar-sm placeholder-avatar">{{ msg.recruteur.first_name.0 }}</span>
+                        <!-- C'est le recruteur qui a envoyé -->
+                        {% if msg.recruteur.profil.photo %}
+                        <img src="{{ msg.recruteur.profil.photo.url }}" class="avatar-sm" alt="">
+                        {% else %}
+                        <span class="avatar-sm placeholder-avatar">{{ msg.recruteur.first_name.0 }}</span>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="flex-grow-1">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <span class="fw-{% if msg.lu %}500{% else %}700{% endif %} small">{{ msg.recruteur.get_full_name }}</span>
-                            {% if not msg.lu %}
-                            <span class="badge bg-accent ms-2" style="font-size:0.65rem">Nouveau</span>
+                            {% if msg.envoye_par_candidat %}
+                                <span class="fw-700 small text-secondary">Vous → {{ msg.recruteur.get_full_name }}</span>
+                                <span class="badge bg-secondary-subtle text-secondary ms-2" style="font-size:0.65rem">Envoyé</span>
+                            {% else %}
+                                <span class="fw-{% if msg.lu %}500{% else %}700{% endif %} small">{{ msg.recruteur.get_full_name }}</span>
+                                {% if not msg.lu %}
+                                <span class="badge bg-accent ms-2" style="font-size:0.65rem">Nouveau</span>
+                                {% endif %}
                             {% endif %}
                         </div>
                         <span class="text-muted" style="font-size:0.7rem">{{ msg.envoye_le|date:"d/m/Y H:i" }}</span>
                     </div>
                     <p class="fw-600 small mb-1">{{ msg.sujet }}</p>
                     <p class="text-muted small mb-2" style="max-height: 40px; overflow: hidden;">{{ msg.message|truncatewords:25 }}</p>
-                    {% if not msg.lu %}
-                    <a href="{% url 'marquer_comme_lu' msg.id %}" class="btn btn-sm btn-outline-accent">
-                        <i class="bi bi-envelope-open me-1"></i>Marquer comme lu
-                    </a>
-                    {% endif %}
+                    
+                    <div class="d-flex gap-2">
+                        {% if not msg.lu and not msg.envoye_par_candidat %}
+                        <a href="{% url 'marquer_comme_lu' msg.id %}" class="btn btn-sm btn-outline-accent">
+                            <i class="bi bi-envelope-open me-1"></i>Lu
+                        </a>
+                        {% endif %}
+                        
+                        {% if not msg.envoye_par_candidat %}
+                        <a href="{% url 'contacter_recruteur' msg.recruteur.id %}" class="btn btn-sm btn-accent">
+                            <i class="bi bi-reply me-1"></i>Répondre
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
