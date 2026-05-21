@@ -8,10 +8,10 @@
         <div class="col-lg-5 col-md-7">
             <div class="text-center mb-4">
                 <div class="mb-3"><i class="bi bi-shield-lock fs-1 text-accent"></i></div>
-                <h2 class="fw-800">Vérification {% if objet == 'email' %}email{% else %}téléphone{% endif %}</h2>
+                <h2 class="fw-800">Vérification {% if type == 'email' %}email{% else %}téléphone{% endif %}</h2>
                 <p class="text-muted">
                     Un code à 6 chiffres a été envoyé à <strong>{{ utilisateur.email }}</strong>
-                    {% if objet == 'telephone' %} (mode dev : envoyé par email){% endif %}.
+                    {% if type == 'telephone' %} (mode dev : envoyé par email){% endif %}.
                 </p>
                 {% if code_dev %}
                 <div class="alert alert-info small">
@@ -31,7 +31,7 @@
                     </button>
                 </form>
                 <div class="text-center mt-3">
-                    <a href="{% url 'renvoyer_otp' utilisateur_id=utilisateur.id objet=objet %}" class="text-muted small text-decoration-none">
+                    <a href="{% url 'renvoyer_otp' utilisateur_id=utilisateur.id type=type %}" class="text-muted small text-decoration-none">
                         <i class="bi bi-arrow-clockwise me-1"></i>Renvoyer un nouveau code
                     </a>
                 </div>
