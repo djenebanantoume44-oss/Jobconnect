@@ -1,7 +1,6 @@
 import random
 from unittest import result
 from urllib import request
-from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -404,17 +403,6 @@ def verifier_telephone(request):
         return redirect('verifier_otp', utilisateur_id=request.user.id, objet='telephone')
     return redirect('tableau_de_bord')
 
-
-def test_email(request):
-    send_mail(
-        'Test',
-        'Email test',
-        settings.EMAIL_HOST_USER,
-        ['tonemail@gmail.com'],
-        fail_silently=False,
-    )
-
-    return HttpResponse("Email envoyé")
 
 
 

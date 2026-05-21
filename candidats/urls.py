@@ -36,5 +36,4 @@ urlpatterns = [
     # Signalement
     path('signaler/<int:utilisateur_id>/', views.signaler_profil, name='signaler'),
 
-    path('test-email/', views.test_email, name='test_email'),
 ]
